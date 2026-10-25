@@ -1,0 +1,28 @@
+@startuml 问诊模块用例图
+left to right direction
+skinparam packageStyle rectangle
+
+actor "患者" as P
+actor "医生" as D
+
+rectangle "问诊模块" {
+  usecase "UC-01 注册与登录" as UC01
+  usecase "UC-03 浏览科室与医生" as UC03
+  usecase "UC-04 提交问诊订单" as UC04
+  usecase "UC-05 支付问诊费" as UC05
+  usecase "UC-06 接诊与拒诊" as UC06
+  usecase "UC-07 图文问诊" as UC07
+  usecase "UC-14 结束问诊" as UC14
+}
+
+P --> UC01
+P --> UC03
+P --> UC04
+P --> UC05
+P --> UC07
+
+D --> UC01
+D --> UC06
+D --> UC07
+D --> UC14
+@enduml
