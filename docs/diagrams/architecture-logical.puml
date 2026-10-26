@@ -1,0 +1,79 @@
+@startuml 逻辑架构
+title 智慧医疗在线问诊与处方流转平台 · 逻辑架构\n模块化单体 + 前后端分离 + DDD 限界上下文
+
+skinparam {
+  DefaultFontName Microsoft YaHei
+  DefaultFontSize 12
+  packageStyle rectangle
+  shadowing false
+  ArrowColor #2563EB
+  BorderColor #94A3B8
+}
+
+package "客户端层" #EFF6FF {
+  [Vue 3 SPA] as spa
+  [患者端] as uiPatient
+  [医生工作台] as uiDoctor
+  [药师工作台] as uiPharmacist
+  [管理后台] as uiAdmin
+}
+
+package "接入层" #F8FAFC {
+  [Nginx\n静态资源 + /api 反向代理] as nginx
+}
+
+package "应用层：Spring Boot 3.5 模块化单体" #F5F3FF {
+  package "identity 身份与权限" #FFFFFF {
+    [AuthService\nJWT / 角色] as identitySvc
+  }
+  package "catalog 基础数据" #FFFFFF {
+    [DoctorQueryPort\nDrugQueryPort] as catalogSvc
+  }
+  package "consultation 问诊" #FFFFFF {
+    [ConsultationService\n订单 / 消息] as consultationSvc
+  }
+  package "prescription 处方" #FFFFFF {
+    [PrescriptionService\n状态机 / 审方记录] as prescriptionSvc
+  }
+  package "pharmacy 药房" #FFFFFF {
+    [ReviewQueue\nDispenseService] as pharmacySvc
+  }
+  package "admin 管理" #FFFFFF {
+    [StatsQuery\nAuditQuery] as adminSvc
+  }
+  package "common 公共内核" #F8FAFC {
+    [ApiResponse / 异常\nJWT / CurrentUser\n审计 / 参数校验] as commonKernel
+  }
+}
+
+package "数据层" #ECFDF5 {
+  database "MySQL 8.0" as db
+  folder "文件存储\n问诊图片" as fileStore
+  database "Redis 7（可选）" as cache
+}
+
+spa --> nginx : HTTPS
+nginx --> identitySvc : /api :8080
+identitySvc --> db : JDBC
+catalogSvc --> db
+consultationSvc --> db
+prescriptionSvc --> db
+pharmacySvc --> prescriptionSvc : application API
+adminSvc --> prescriptionSvc : 只读 query
+consultationSvc --> catalogSvc : query port
+prescriptionSvc --> catalogSvc : 药品快照
+prescriptionSvc --> consultationSvc : 订单 query port
+consultationSvc --> fileStore : 图片上传
+
+identitySvc --> commonKernel
+catalogSvc --> commonKernel
+consultationSvc --> commonKernel
+prescriptionSvc --> commonKernel
+pharmacySvc --> commonKernel
+adminSvc --> commonKernel
+
+note bottom of commonKernel
+  依赖规则：interfaces → application → domain ← infrastructure；
+  模块间只通过 application / query port 协作，禁止跨模块访问 Mapper。
+end note
+@enduml
