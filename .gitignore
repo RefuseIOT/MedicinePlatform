@@ -1,0 +1,19 @@
+# 构建产物
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# 本地参考文档（不提交）
+docs/
+
+# 环境变量与密钥
+.env
+.env.local
+
+# 日志
+*.log

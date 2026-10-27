@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: medicine-platform
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/medicine?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: ${JWT_SECRET:dev-only-secret-please-change-0123456789abcdef0123456789abcdef}
+  expire-minutes: ${JWT_EXPIRE_MINUTES:120}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
