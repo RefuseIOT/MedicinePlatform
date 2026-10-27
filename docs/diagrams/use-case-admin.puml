@@ -7,10 +7,12 @@ actor "管理员" as A
 rectangle "管理模块" {
   usecase "UC-01 注册与登录" as UC01
   usecase "UC-02 账号与药品维护" as UC02
+  usecase "UC-15 查看处方与状态" as UC15
   usecase "UC-16 统计与操作日志" as UC16
 }
 
 A --> UC01
 A --> UC02
 A --> UC16
+A --> UC15
 @enduml

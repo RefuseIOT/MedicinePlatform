@@ -41,6 +41,7 @@ flowchart LR
     D((医生))
     PH((药师))
     P((患者))
+    A((管理员))
 
     subgraph 处方模块
         UC08([UC-08 开具处方])
@@ -61,6 +62,7 @@ flowchart LR
     PH --> UC13
     PH --> UC15
     P --> UC15
+    A --> UC15
     UC09 -. include .-> UC08
     UC12 -. extend .-> UC11
 ```
@@ -76,12 +78,14 @@ flowchart LR
     subgraph 管理模块
         UC01([UC-01 注册与登录])
         UC02([UC-02 账号与药品维护])
+        UC15([UC-15 查看处方与状态])
         UC16([UC-16 统计与操作日志])
     end
 
     A --> UC01
     A --> UC02
     A --> UC16
+    A --> UC15
 ```
 
 ## 4. 活动图：问诊主流程

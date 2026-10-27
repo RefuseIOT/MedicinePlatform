@@ -5,6 +5,7 @@ skinparam packageStyle rectangle
 actor "医生" as D
 actor "药师" as PH
 actor "患者" as P
+actor "管理员" as A
 
 rectangle "处方模块" {
   usecase "UC-08 开具处方" as UC08
@@ -27,6 +28,8 @@ PH --> UC13
 PH --> UC15
 
 P --> UC15
+
+A --> UC15
 
 UC09 ..> UC08 : <<include>>
 UC12 ..> UC11 : <<extend>>
