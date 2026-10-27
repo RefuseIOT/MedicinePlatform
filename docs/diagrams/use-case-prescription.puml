@@ -1,0 +1,36 @@
+@startuml 处方模块用例图
+left to right direction
+skinparam packageStyle rectangle
+
+actor "医生" as D
+actor "药师" as PH
+actor "患者" as P
+actor "管理员" as A
+
+rectangle "处方模块" {
+  usecase "UC-08 开具处方" as UC08
+  usecase "UC-09 提交处方审核" as UC09
+  usecase "UC-10 审核处方通过" as UC10
+  usecase "UC-11 驳回处方" as UC11
+  usecase "UC-12 修改并重提处方" as UC12
+  usecase "UC-13 核销处方" as UC13
+  usecase "UC-15 查看处方与状态" as UC15
+}
+
+D --> UC08
+D --> UC09
+D --> UC12
+D --> UC15
+
+PH --> UC10
+PH --> UC11
+PH --> UC13
+PH --> UC15
+
+P --> UC15
+
+A --> UC15
+
+UC09 ..> UC08 : <<include>>
+UC12 ..> UC11 : <<extend>>
+@enduml

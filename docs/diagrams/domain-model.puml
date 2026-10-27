@@ -1,0 +1,78 @@
+@startuml 领域模型
+hide circle
+skinparam linetype ortho
+
+class 用户 {
+  - userId : Long
+  - 手机号 : String
+  - 密码摘要 : String
+  - 姓名 : String
+  - 角色 : Enum
+  - 状态 : Enum
+}
+
+class 医生 {
+  - 职称 : String
+  - 擅长 : String
+  - 问诊价 : Decimal
+  - 在线状态 : Boolean
+}
+
+class 科室 {
+  - 科室名 : String
+  - 排序号 : Integer
+}
+
+class 问诊订单 {
+  - 订单号 : String
+  - 病情描述 : Text
+  - 状态 : Enum
+  - 问诊费 : Decimal
+  - 支付时间 : DateTime
+}
+
+class 会话消息 {
+  - 消息类型 : Enum
+  - 内容 : Text
+  - 发送时间 : DateTime
+}
+
+class 处方 {
+  - 处方号 : String
+  - 诊断 : String
+  - 状态 : Enum
+  - 驳回理由 : String
+  - 有效期至 : DateTime
+}
+
+class 处方明细 {
+  - 药品名称快照 : String
+  - 单价快照 : Decimal
+  - 数量 : Integer
+  - 用法用量 : String
+  - 天数 : Integer
+}
+
+class 药品 {
+  - 药品名 : String
+  - 规格 : String
+  - 单价 : Decimal
+  - 是否处方药 : Boolean
+}
+
+class 审方记录 {
+  - 审核结果 : Enum
+  - 理由 : String
+  - 审核时间 : DateTime
+}
+
+用户 "1" -- "0..1" 医生
+科室 "1" -- "0..*" 医生
+用户 "1" -- "0..*" 问诊订单 : 患者下单
+医生 "1" -- "0..*" 问诊订单 : 接诊
+问诊订单 "1" -- "0..*" 会话消息
+问诊订单 "1" -- "0..*" 处方
+处方 "1" -- "1..*" 处方明细
+药品 "1" -- "0..*" 处方明细
+处方 "1" -- "0..*" 审方记录
+@enduml
