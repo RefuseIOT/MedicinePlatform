@@ -10,6 +10,7 @@ import com.medicine.platform.identity.interfaces.dto.UserVO;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,15 @@ public class AuthController {
     @GetMapping("/me")
     public ApiResponse<UserVO> me(@AuthenticationPrincipal CurrentUser currentUser) {
         return ApiResponse.ok(UserVO.from(authAppService.me(currentUser.userId())));
+    }
+
+    /**
+     * 注销：JWT 无状态，token 由客户端丢弃，服务端仅返回 204。
+     * TODO(S4): 记录注销审计（取 currentUser.userId()），并引入 tokenVersion 实现即时失效。
+     * 见《API 接口规范》§4.4。
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal CurrentUser currentUser) {
+        return ResponseEntity.noContent().build();
     }
 }
