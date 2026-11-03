@@ -1,0 +1,57 @@
+@startuml 部署架构
+title 部署架构：开发 / 演示环境\n浏览器 → Nginx → Spring Boot → MySQL
+
+skinparam {
+  DefaultFontName Microsoft YaHei
+  DefaultFontSize 12
+  shadowing false
+  ArrowColor #2563EB
+  BorderColor #94A3B8
+}
+
+actor "用户浏览器\nChrome / Edge" as browser
+
+node "Docker Compose 主机（演示环境）" {
+  node "nginx 容器" as nginx {
+    artifact "Vue dist" as dist
+    artifact "/api 反向代理" as proxy
+  }
+
+  node "backend 容器" as backend {
+    component "Spring Boot 3.5\nJWT / 权限 / 状态机" as app
+  }
+
+  database "mysql 容器\nMySQL 8.0" as mysql
+  database "redis 容器（可选）" as redis
+
+  node "volume" as vol1 {
+    artifact "mysql-data" as data
+  }
+  node "volume" as vol2 {
+    artifact "uploads" as uploads
+  }
+}
+
+cloud "开发环境（不用 Nginx）" {
+  [Vite :5173] as vite
+}
+
+browser --> nginx : HTTP/HTTPS :80/443
+nginx --> app : /api :8080
+app --> mysql : JDBC :3306
+app --> uploads : 上传文件
+mysql --> data : 数据文件
+app --> redis : 可选
+vite --> app : /api 代理
+browser --> vite : 开发访问
+
+note bottom of mysql
+  MySQL / Redis 不映射到宿主机；
+  只开放 Nginx 80/443。
+end note
+
+note bottom of app
+  JWT_SECRET、DB_PASSWORD 由 .env 注入；
+  不提交到 Git。
+end note
+@enduml

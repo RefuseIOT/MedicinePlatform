@@ -1,0 +1,56 @@
+@startuml 权限闸门
+title 权限的三道闸门 + 状态校验
+
+skinparam {
+  DefaultFontName Microsoft YaHei
+  DefaultFontSize 13
+  shadowing false
+  ArrowColor #2563EB
+  BorderColor #94A3B8
+  ActivityBackgroundColor #FFFFFF
+  ActivityBorderColor #2563EB
+}
+
+start
+:HTTP 请求\nAuthorization: Bearer <JWT>;
+
+if (token 有效？) then (否)
+  #FEF2F2:401 未登录 / 过期;
+  :清 token，跳登录;
+  stop
+else (是)
+endif
+
+if (角色允许？) then (否)
+  #FFFBEB:403 角色不允许;
+  :无权限提示;
+  stop
+else (是)
+endif
+
+if (资源存在且属于当前用户？) then (否)
+  #F5F3FF:404 资源不存在 / 不是你的;
+  :统一按不存在处理;
+  stop
+else (是)
+endif
+
+if (状态允许且 version 匹配？) then (否)
+  #FEF2F2:409 状态冲突 / 版本冲突;
+  :返回 currentStatus / currentVersion;
+  :前端刷新后重试;
+  stop
+else (是)
+endif
+
+#ECFDF5:领域对象执行迁移;
+:事务提交 + 审计日志;
+:返回 200;
+
+note right
+  顺序不能反：
+  先认证 → 再角色 → 再归属 → 最后状态。
+  角色不允许返回 403；
+  资源不属于当前用户返回 404（防枚举）。
+end note
+@enduml
