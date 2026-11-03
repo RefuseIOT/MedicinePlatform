@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     private HttpStatus resolveHttpStatus(int code) {
-        if (code == ErrorCode.BAD_REQUEST.getCode()) {
+        if (code == ErrorCode.BAD_REQUEST.getCode() || code == ErrorCode.INVALID_ARGUMENT.getCode()) {
             return HttpStatus.BAD_REQUEST;
         }
         if (code == ErrorCode.UNAUTHORIZED.getCode()) {
@@ -60,7 +60,9 @@ public class GlobalExceptionHandler {
         if (code == ErrorCode.NOT_FOUND.getCode()) {
             return HttpStatus.NOT_FOUND;
         }
-        if (code == ErrorCode.CONFLICT.getCode() || code == ErrorCode.VERSION_CONFLICT.getCode()) {
+        if (code == ErrorCode.CONFLICT.getCode()
+                || code == ErrorCode.VERSION_CONFLICT.getCode()
+                || code == ErrorCode.DUPLICATE_OPERATION.getCode()) {
             return HttpStatus.CONFLICT;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
