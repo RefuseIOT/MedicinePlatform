@@ -8,29 +8,31 @@ actor "患者" as P
 actor "管理员" as A
 
 rectangle "处方模块" {
-  usecase "UC-08 开具处方" as UC08
-  usecase "UC-09 提交处方审核" as UC09
-  usecase "UC-10 审核处方通过" as UC10
-  usecase "UC-11 驳回处方" as UC11
-  usecase "UC-12 修改并重提处方" as UC12
-  usecase "UC-13 核销处方" as UC13
-  usecase "UC-15 查看处方与状态" as UC15
+  usecase "UC-03 药品目录维护" as UC03
+  usecase "UC-09 开具处方" as UC09
+  usecase "UC-10 提交处方审核" as UC10
+  usecase "UC-11 审核处方通过" as UC11
+  usecase "UC-12 驳回处方" as UC12
+  usecase "UC-13 修改并重提处方" as UC13
+  usecase "UC-14 核销处方" as UC14
+  usecase "UC-16 查看处方与状态" as UC16
 }
 
-D --> UC08
 D --> UC09
-D --> UC12
-D --> UC15
+D --> UC10
+D --> UC13
+D --> UC16
 
-PH --> UC10
+PH --> UC03
 PH --> UC11
-PH --> UC13
-PH --> UC15
+PH --> UC12
+PH --> UC14
+PH --> UC16
 
-P --> UC15
+P --> UC16
 
-A --> UC15
+A --> UC16
 
-UC09 ..> UC08 : <<include>>
-UC12 ..> UC11 : <<extend>>
+UC10 ..> UC09 : <<include>>
+UC13 ..> UC12 : <<extend>>
 @enduml
