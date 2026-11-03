@@ -42,4 +42,5 @@
 
 ## MySQL 8
 
-8.0.x。我这里是8.0.32
+8.0.46
+下载：https://dev.mysql.com/downloads/mysql/
