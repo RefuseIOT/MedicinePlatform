@@ -1,0 +1,15 @@
+@startuml 核销处方活动图
+start
+:读取处方;
+if (状态为待核销?) then (是)
+  if (当前时间不超过有效期?) then (是)
+    :乐观锁更新为已核销;
+    :记录核销人和时间;
+  else (否)
+    :返回已过期冲突;
+  endif
+else (否)
+  :返回重复/非法状态冲突;
+endif
+stop
+@enduml

@@ -1,0 +1,16 @@
+@startuml 问诊订单状态图
+hide empty description
+state "待支付" as PENDING_PAYMENT
+state "待接诊" as PENDING_ACCEPT
+state "问诊中" as IN_CONSULTATION
+state "已完成" as COMPLETED
+state "已取消" as CANCELLED
+[*] --> PENDING_PAYMENT : 提交订单
+PENDING_PAYMENT --> PENDING_ACCEPT : 支付成功
+PENDING_PAYMENT --> CANCELLED : 30 分钟超时或患者取消
+PENDING_ACCEPT --> IN_CONSULTATION : 医生接诊
+PENDING_ACCEPT --> CANCELLED : 医生拒诊或 24 小时超时
+IN_CONSULTATION --> COMPLETED : 医生结束问诊
+COMPLETED --> [*]
+CANCELLED --> [*]
+@enduml

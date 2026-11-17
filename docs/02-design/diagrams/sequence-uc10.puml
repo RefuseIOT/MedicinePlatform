@@ -1,0 +1,22 @@
+@startuml UC-10 提交处方审核
+actor 医生
+boundary "处方接口" as PrescriptionController
+control "处方应用服务" as PrescriptionAppService
+control "处方状态机" as PrescriptionStateMachine
+entity "处方仓储" as PrescriptionRepository
+entity "药品查询端口" as DrugQueryPort
+entity "流转记录仓储" as FlowRecordRepository
+医生 -> PrescriptionController : 提交处方审核（版本号）
+PrescriptionController -> PrescriptionAppService : 提交审核(处方编号, 医生编号, 版本)
+PrescriptionAppService -> PrescriptionRepository : 查询处方聚合
+PrescriptionAppService -> DrugQueryPort : 查询启用药品
+PrescriptionAppService -> PrescriptionStateMachine : 执行提交迁移
+PrescriptionStateMachine --> PrescriptionAppService : 目标状态为待审核
+PrescriptionAppService -> PrescriptionRepository : 按版本更新
+alt 更新冲突
+  PrescriptionAppService --> PrescriptionController : 40903
+else 成功
+  PrescriptionAppService -> FlowRecordRepository : 追加提交记录
+  PrescriptionAppService --> PrescriptionController : prescription summary
+end
+@enduml
