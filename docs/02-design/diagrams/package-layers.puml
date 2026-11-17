@@ -1,0 +1,14 @@
+@startuml 模块内四层结构
+skinparam packageStyle rectangle
+package "接口层" as I
+package "应用层" as A
+package "领域层" as D
+package "基础设施层" as F
+I --> A : 调用用例/DTO转换
+A --> D : 编排实体与仓储端口
+F ..> D : 实现仓储端口
+note right of D
+不依赖 Spring Web/MyBatis
+保存实体、值对象、状态机、端口
+end note
+@enduml

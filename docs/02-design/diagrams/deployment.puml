@@ -1,0 +1,15 @@
+@startuml 物理部署图
+node "客户端" { artifact "浏览器（Chrome / Edge）" as Browser }
+node "容器宿主机" {
+  node "前端容器" { artifact "Nginx 与 Vue 静态资源" as Web }
+  node "后端容器" { artifact "Spring Boot 3.5 / JRE 21" as App }
+  database "数据库容器\nMySQL 8" as DB
+  folder "上传文件持久卷" as Files
+  folder "数据库持久卷" as Data
+}
+Browser --> Web : 安全访问 443
+Web --> App : 接口转发 8080
+App --> DB : JDBC 3306
+App --> Files : 问诊图片
+DB --> Data
+@enduml

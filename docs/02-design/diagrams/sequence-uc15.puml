@@ -1,0 +1,17 @@
+@startuml UC-15 结束问诊
+actor 医生
+boundary "问诊订单接口" as ConsultationController
+control "问诊订单服务" as ConsultationOrderAppService
+entity "问诊订单仓储" as OrderRepository
+entity "处方查询端口" as PrescriptionQueryPort
+医生 -> ConsultationController : 提交结束问诊（无需处方标志、版本号）
+ConsultationController -> ConsultationOrderAppService : 结束问诊(订单编号, 无需处方标志, 版本)
+ConsultationOrderAppService -> OrderRepository : 查询医生本人订单
+ConsultationOrderAppService -> PrescriptionQueryPort : 查询订单关联处方
+alt 无处方且未明确无需处方
+  ConsultationOrderAppService --> ConsultationController : 40001
+else 条件满足
+  ConsultationOrderAppService -> OrderRepository : 按版本更新为已完成
+  ConsultationOrderAppService --> ConsultationController : 返回成功或版本冲突
+end
+@enduml

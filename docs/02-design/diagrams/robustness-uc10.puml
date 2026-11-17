@@ -1,0 +1,21 @@
+@startuml UC-10 提交处方审核-鲁棒图
+left to right direction
+actor 医生
+boundary "处方编辑页面" as UI
+boundary "处方接口" as API
+control "处方应用服务" as Service
+control "处方状态机" as FSM
+entity "处方" as P
+entity "处方明细" as Item
+entity "药品" as Drug
+entity "处方流转记录" as Flow
+医生 --> UI
+UI --> API
+API --> Service
+Service --> P
+Service --> Item
+Service --> Drug
+Service --> FSM
+FSM --> P
+Service --> Flow
+@enduml

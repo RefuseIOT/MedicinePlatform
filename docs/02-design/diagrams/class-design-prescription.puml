@@ -1,0 +1,54 @@
+@startuml 处方聚合设计类图
+hide empty members
+
+class "处方" as Prescription {
+  - 编号 : 长整数
+  - 处方号 : 字符串
+  - 订单编号 : 长整数
+  - 医生编号 : 长整数
+  - 患者编号 : 长整数
+  - 诊断 : 字符串
+  - 状态 : 处方状态
+  - 版本号 : 整数
+  + 提交审核()
+  + 撤回()
+  + 审核通过()
+  + 驳回(理由)
+  + 重新提交()
+  + 核销()
+  + 作废(理由)
+}
+
+class "处方明细" as PrescriptionItem {
+  - 编号 : 长整数
+  - 药品编号 : 长整数
+  - 药品名称快照 : 字符串
+  - 药品规格快照 : 字符串
+  - 单价快照 : 高精度小数
+  - 数量 : 整数
+  - 用法用量 : 字符串
+  - 用药天数 : 整数
+  + 校验明细()
+  + 计算小计() : 金额
+}
+
+class "处方流转记录" as PrescriptionFlowRecord {
+  - 编号 : 长整数
+  - 处方编号 : 长整数
+  - 动作 : 流转动作
+  - 原状态 : 处方状态
+  - 目标状态 : 处方状态
+  - 操作人编号 : 长整数
+  - 原因 : 字符串
+  - 创建时间 : 日期时间
+}
+
+interface "处方仓储" as PrescriptionRepository {
+  + 查询处方聚合(处方编号) : 处方
+  + 按版本更新(处方) : 布尔值
+}
+
+Prescription "1" *-- "1..5" PrescriptionItem
+Prescription "1" o-- "0..*" PrescriptionFlowRecord
+PrescriptionRepository ..> Prescription
+@enduml
