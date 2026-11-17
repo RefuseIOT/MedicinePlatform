@@ -1,0 +1,17 @@
+@startuml UC-11 审核通过
+actor 药师
+boundary "审方接口" as ReviewController
+control "审方服务" as ReviewAppService
+control "处方状态机" as PrescriptionStateMachine
+entity "处方仓储" as PrescriptionRepository
+entity "流转记录仓储" as FlowRecordRepository
+药师 -> ReviewController : 提交审核通过（版本号）
+ReviewController -> ReviewAppService : 审核通过(处方编号, 药师, 版本)
+ReviewAppService -> PrescriptionRepository : 查询处方
+ReviewAppService -> PrescriptionStateMachine : 执行通过迁移
+PrescriptionStateMachine --> ReviewAppService : 目标状态为待核销
+ReviewAppService -> ReviewAppService : 设置三天有效期
+ReviewAppService -> PrescriptionRepository : 按版本更新
+ReviewAppService -> FlowRecordRepository : 追加审核通过记录
+ReviewAppService --> ReviewController : 返回结果或冲突
+@enduml
