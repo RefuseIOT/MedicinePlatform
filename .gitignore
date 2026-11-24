@@ -1,5 +1,5 @@
 # - Java / Maven 
-target/build/
+target/
 *.class
 *.jar
 *.war
