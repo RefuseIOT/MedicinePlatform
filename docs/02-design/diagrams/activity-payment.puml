@@ -1,0 +1,20 @@
+@startuml 支付问诊费活动图
+start
+:读取本人待支付订单;
+if (订单存在且未超时?) then (是)
+  :校验登录密码;
+  if (密码正确?) then (是)
+    :按 status+version 条件更新为待接诊;
+    if (更新成功?) then (是)
+      :记录支付时间;
+    else (否)
+      :返回 40903;
+    endif
+  else (否)
+    :返回 40003，保持待支付;
+  endif
+else (否)
+  :返回 404/409;
+endif
+stop
+@enduml

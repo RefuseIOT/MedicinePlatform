@@ -1,0 +1,19 @@
+@startuml UC-02 账号维护
+actor 管理员
+boundary "账号管理接口" as AccountController
+control "账号管理服务" as AccountAppService
+entity "用户仓储" as UserRepository
+database "关系数据库" as MySQL
+管理员 -> AccountController : 创建账号(dto)
+AccountController -> AccountAppService : 创建账号(账号信息, 当前管理员)
+AccountAppService -> UserRepository : 检查手机号是否存在
+alt 手机号重复
+  UserRepository --> AccountAppService : 手机号已存在
+  AccountAppService --> AccountController : 40902
+else 可创建
+  AccountAppService -> AccountAppService : 加密密码并校验角色
+  AccountAppService -> UserRepository : 保存用户
+  UserRepository -> MySQL : 写入用户数据
+  AccountAppService --> AccountController : 返回账号编号
+end
+@enduml

@@ -1,0 +1,17 @@
+@startuml UC-12 驳回处方
+actor 药师
+boundary "审方接口" as ReviewController
+control "审方服务" as ReviewAppService
+control "处方状态机" as PrescriptionStateMachine
+entity "处方仓储" as PrescriptionRepository
+entity "流转记录仓储" as FlowRecordRepository
+药师 -> ReviewController : 提交审核驳回（理由、版本号）
+ReviewController -> ReviewAppService : 驳回处方(处方编号, 理由, 版本)
+ReviewAppService -> ReviewAppService : 校验理由不少于十字
+ReviewAppService -> PrescriptionRepository : 查询处方
+ReviewAppService -> PrescriptionStateMachine : 执行驳回迁移
+PrescriptionStateMachine --> ReviewAppService : 目标状态为已驳回
+ReviewAppService -> PrescriptionRepository : 按版本更新并保存理由
+ReviewAppService -> FlowRecordRepository : 追加驳回记录
+ReviewAppService --> ReviewController : 返回结果或错误
+@enduml

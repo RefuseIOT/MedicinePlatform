@@ -1,0 +1,16 @@
+@startuml UC-14 核销处方
+actor 药师
+boundary "核销接口" as DispenseController
+control "处方核销服务" as DispenseAppService
+control "处方状态机" as PrescriptionStateMachine
+entity "处方仓储" as PrescriptionRepository
+entity "流转记录仓储" as FlowRecordRepository
+药师 -> DispenseController : 提交处方核销（版本号）
+DispenseController -> DispenseAppService : 核销(处方编号, 药师, 版本)
+DispenseAppService -> PrescriptionRepository : 查询处方
+DispenseAppService -> DispenseAppService : 校验待核销且未过期
+DispenseAppService -> PrescriptionStateMachine : 执行核销迁移
+DispenseAppService -> PrescriptionRepository : 按版本更新为已核销
+DispenseAppService -> FlowRecordRepository : 追加核销记录
+DispenseAppService --> DispenseController : 返回成功或冲突
+@enduml

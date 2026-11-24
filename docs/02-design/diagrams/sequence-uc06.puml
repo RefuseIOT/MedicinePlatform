@@ -1,0 +1,22 @@
+@startuml UC-06 支付问诊费
+actor 患者
+boundary "问诊订单接口" as ConsultationController
+control "支付确认服务" as PaymentAppService
+entity "问诊订单仓储" as OrderRepository
+entity "密码校验器" as PasswordEncoder
+患者 -> ConsultationController : 提交支付确认（密码、版本号）
+ConsultationController -> PaymentAppService : 确认支付(订单编号, 密码, 版本)
+PaymentAppService -> OrderRepository : 查询患者本人订单
+PaymentAppService -> PasswordEncoder : 校验密码
+alt 密码错误
+  PaymentAppService --> ConsultationController : 40003
+else 密码正确
+  PaymentAppService -> PaymentAppService : 校验待支付且未过期
+  PaymentAppService -> OrderRepository : 按版本更新为待接诊
+  alt 更新行数=0
+    PaymentAppService --> ConsultationController : 40903
+  else 成功
+    PaymentAppService --> ConsultationController : order summary
+  end
+end
+@enduml

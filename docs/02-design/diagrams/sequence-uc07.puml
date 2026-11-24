@@ -1,0 +1,17 @@
+@startuml UC-07 接诊与拒诊
+actor 医生
+boundary "医生工作台接口" as DoctorWorklistController
+control "问诊订单服务" as ConsultationOrderAppService
+entity "问诊订单仓储" as OrderRepository
+医生 -> DoctorWorklistController : 提交接诊决定（动作、理由、版本号）
+DoctorWorklistController -> ConsultationOrderAppService : 处理接诊决定
+ConsultationOrderAppService -> OrderRepository : 查询订单
+ConsultationOrderAppService -> ConsultationOrderAppService : 校验医生归属和待接诊状态
+alt 接诊
+  ConsultationOrderAppService -> OrderRepository : 更新为问诊中
+else 拒诊
+  ConsultationOrderAppService -> ConsultationOrderAppService : 校验拒诊理由
+  ConsultationOrderAppService -> OrderRepository : 更新为已取消并标记待退款
+end
+ConsultationOrderAppService --> DoctorWorklistController : 返回处理结果或错误
+@enduml

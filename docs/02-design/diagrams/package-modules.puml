@@ -1,0 +1,43 @@
+@startuml 模块逻辑架构包图
+skinparam packageStyle rectangle
+package "前端应用（Vue 3）" as FE
+package "后端应用（Spring Boot 模块化单体）" {
+  package "公共模块" as common
+  package "身份认证模块" as identity
+  package "基础目录模块" as catalog
+  package "问诊模块" as consultation
+  package "处方模块" as prescription
+  package "药房模块" as pharmacy
+  package "管理模块" as admin
+}
+database "关系数据库（MySQL）" as MySQL
+FE --> identity : 接口调用
+FE --> catalog
+FE --> consultation
+FE --> prescription
+FE --> pharmacy
+FE --> admin
+identity ..> common
+catalog ..> common
+consultation ..> common
+prescription ..> common
+pharmacy ..> common
+admin ..> common
+catalog ..> identity : 用户查询端口
+consultation ..> identity : 当前用户端口
+consultation ..> catalog : 医生查询端口
+prescription ..> consultation : 订单查询端口
+prescription ..> catalog : 药品查询端口
+pharmacy ..> prescription : 处方应用端口
+admin ..> identity : 账号管理端口
+admin ..> consultation : 问诊只读端口
+admin ..> prescription : 处方只读端口
+identity --> MySQL
+catalog --> MySQL
+consultation --> MySQL
+prescription --> MySQL
+admin --> MySQL
+note bottom of common
+公共模块不得依赖任何业务模块
+end note
+@enduml

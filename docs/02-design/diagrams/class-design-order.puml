@@ -1,0 +1,37 @@
+@startuml 问诊订单聚合设计类图
+hide empty members
+
+class "问诊订单" as ConsultationOrder {
+  - 编号 : 长整数
+  - 订单号 : 字符串
+  - 患者编号 : 长整数
+  - 医生编号 : 长整数
+  - 病情描述 : 字符串
+  - 问诊费 : 高精度小数
+  - 状态 : 订单状态
+  - 版本号 : 整数
+  + 支付()
+  + 接诊()
+  + 拒诊(理由)
+  + 取消(理由)
+  + 结束问诊(无需处方标志)
+}
+
+class "问诊消息" as ConsultationMessage {
+  - 编号 : 长整数
+  - 订单编号 : 长整数
+  - 发送人编号 : 长整数
+  - 消息类型 : 消息类型
+  - 内容 : 字符串
+  - 发送时间 : 日期时间
+  + 校验内容()
+}
+
+interface "问诊订单仓储" as OrderRepository {
+  + 按归属查询(订单编号, 用户编号) : 问诊订单
+  + 按版本更新状态(订单) : 布尔值
+}
+
+ConsultationOrder "1" *-- "0..*" ConsultationMessage
+OrderRepository ..> ConsultationOrder
+@enduml
